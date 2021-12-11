@@ -885,7 +885,7 @@ export class Chess {
         this.reset()
 
         /* parse PGN header */
-        const headers = parse_pgn_header(header_string, options)
+        const headers = parse_pgn_header(header_string, options) as any;
         for (const key in headers) {
             this.set_header([key, headers[key]])
         }
@@ -1482,19 +1482,19 @@ export class Chess {
 
             if (piece.type === PAWN && (piece_type === true || piece_type === PAWN)) {
                 /* single square, non-capturing */
-                const square = i + PAWN_OFFSETS[us][0]
+                let square = i + PAWN_OFFSETS[us][0]
                 if (board[square] == null) {
                     add_move(board, moves, i, square, BITS.NORMAL)
 
                     /* double square */
-                    const square = i + PAWN_OFFSETS[us][1]
+                    square = i + PAWN_OFFSETS[us][1]
                     if (second_rank[us] === this.rank(i) && board[square] == null) {
                         add_move(board, moves, i, square, BITS.BIG_PAWN)
                     }
                 }
 
                 /* pawn captures */
-                for (j = 2; j < 4; j++) {
+                for (let j = 2; j < 4; j++) {
                     const square = i + PAWN_OFFSETS[us][j]
                     if (square & 0x88) continue
 
@@ -1950,6 +1950,12 @@ export class Chess {
 
         let overly_disambiguated = false
 
+        let piece;
+        let from;
+        let to;
+        let promotion;
+        let matches;
+
         if (sloppy) {
             // The sloppy parser allows the user to parse non-standard chess
             // notations. This parser is opt-in (by specifying the
@@ -1967,14 +1973,14 @@ export class Chess {
             // bishop move). In these cases, the sloppy parser will default to the
             // most most basic interpretation - b1c3 parses to Nc3.
 
-            const matches = clean_move.match(
+            matches = clean_move.match(
                 /([pnbrqkPNBRQK])?([a-h][1-8])x?-?([a-h][1-8])([qrbnQRBN])?/
             )
             if (matches) {
-                const piece = matches[1]
-                const from = matches[2]
-                const to = matches[3]
-                const promotion = matches[4]
+                piece = matches[1]
+                from = matches[2]
+                to = matches[3]
+                promotion = matches[4]
 
                 if (from.length == 1) {
                     overly_disambiguated = true
@@ -1989,13 +1995,13 @@ export class Chess {
                 )
 
                 if (matches) {
-                    const piece = matches[1]
-                    const from = matches[2]
-                    const to = matches[3]
-                    const promotion = matches[4]
+                    piece = matches[1]
+                    from = matches[2]
+                    to = matches[3]
+                    promotion = matches[4]
 
                     if (from.length == 1) {
-                        const overly_disambiguated = true
+                        overly_disambiguated = true
                     }
                 }
             }
