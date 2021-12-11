@@ -268,7 +268,7 @@ export class Chess {
     public readonly KING = KING;
     public readonly FLAGS = FLAGS;
 
-    constructor(fen: string) {
+    constructor(fen?: string) {
         /* if the user passes in a fen string, load it, else default to
          * starting position
          */
@@ -1275,7 +1275,7 @@ export class Chess {
         return turn;
     }
 
-    move(move: Move, options?: {
+    move(move: {from: Square, to: Square, promotion?: PieceType}, options?: {
         sloppy?: boolean,
     }) {
         /* The move function can be called with in the following parameters:
