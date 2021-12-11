@@ -24,6 +24,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  *----------------------------------------------------------------------------*/
+export type Color = 'w'|'b';
+export type PieceType = 'p'|'n'|'b'|'r'|'q'|'k';
+export type Square = keyof typeof SQUARES;
+
 interface Move {
     color: string;
     from: string;
@@ -32,6 +36,11 @@ interface Move {
     piece: any;
     captured: any;
     promotion: any;
+}
+
+interface Piece {
+    color: Color;
+    type: PieceType;
 }
 
 const BLACK = 'b';
@@ -259,7 +268,7 @@ export class Chess {
     public readonly KING = KING;
     public readonly FLAGS = FLAGS;
 
-    constructor(fen) {
+    constructor(fen: string) {
         /* if the user passes in a fen string, load it, else default to
          * starting position
          */
@@ -288,7 +297,7 @@ export class Chess {
         return keys;
     }
 
-    load(fen, keep_headers?) {
+    load(fen: string, keep_headers?: boolean) {
         if (typeof keep_headers === 'undefined') {
             keep_headers = false;
         }
@@ -313,7 +322,7 @@ export class Chess {
             } else {
                 const color = piece < 'a' ? WHITE : BLACK;
                 this.put({
-                    type: piece.toLowerCase(),
+                    type: piece.toLowerCase() as PieceType,
                     color
                 }, this.algebraic(square));
                 square++;
@@ -348,7 +357,9 @@ export class Chess {
         this.load(DEFAULT_POSITION);
     }
 
-    moves(options) {
+    moves(options?: {
+        verbose?: boolean
+    }) {
         /* The internal representation of a chess move is in 0x88 format, and
          * not meant to be human-readable.  The code below converts the 0x88
          * square coordinates to algebraic coordinates.  It also prunes an
@@ -499,7 +510,7 @@ export class Chess {
      * ... we should rewrite this, and ditch the silly error_number field while
      * we're at it
      */
-    validate_fen(fen) {
+    validate_fen(fen: string) {
         const errors = {
             0: 'No errors.',
             1: 'FEN string must contain six space-delimited fields.',
@@ -526,7 +537,7 @@ export class Chess {
         }
 
         /* 2nd criterion: move number field is a integer value > 0? */
-        if (isNaN(tokens[5]) || parseInt(tokens[5], 10) <= 0) {
+        if (isNaN(Number(tokens[5])) || parseInt(tokens[5], 10) <= 0) {
             return {
                 valid: false,
                 error_number: 2,
@@ -535,7 +546,7 @@ export class Chess {
         }
 
         /* 3rd criterion: half move counter is an integer >= 0? */
-        if (isNaN(tokens[4]) || parseInt(tokens[4], 10) < 0) {
+        if (isNaN(Number(tokens[4])) || parseInt(tokens[4], 10) < 0) {
             return {
                 valid: false,
                 error_number: 3,
@@ -587,7 +598,7 @@ export class Chess {
             let previous_was_number = false;
 
             for (let k = 0; k < rows[i].length; k++) {
-                if (!isNaN(rows[i][k])) {
+                if (!isNaN(Number(rows[i][k]))) {
                     if (previous_was_number) {
                         return {
                             valid: false,
@@ -664,7 +675,10 @@ export class Chess {
         return output;
     }
 
-    pgn(options) {
+    pgn(options?: {
+        newline_char?: string,
+        max_width?: number,
+    }) {
         /* using the specification from http://www.chessclub.com/help/PGN-spec
          * example for html usage: .pgn({ max_width: 72, newline_char: "<br />" })
          */
@@ -818,7 +832,10 @@ export class Chess {
         return result.join('');
     }
 
-    load_pgn(pgn, options) {
+    load_pgn(pgn: string, options?: {
+        sloppy?: boolean,
+        newline_char?: string,
+    }) {
         // allow the user to specify the sloppy move parser to work around over
         // disambiguation bugs in Fritz and Chessbase
         const sloppy =
@@ -1012,10 +1029,10 @@ export class Chess {
     }
 
     header() {
-        return this.set_header(arguments);
+        return this.set_header(arguments as unknown as string[]);
     }
 
-    put(piece, square) {
+    put(piece: Piece, square: Square) {
         /* check for valid piece object */
         if (!('type' in piece && 'color' in piece)) {
             return false;
@@ -1054,7 +1071,7 @@ export class Chess {
         return true;
     }
 
-    get(square) {
+    get(square: Square) {
         const piece = board[SQUARES[square]];
         return piece ? {
             type: piece.type,
@@ -1062,7 +1079,7 @@ export class Chess {
         } : null;
     }
 
-    remove(square) {
+    remove(square: Square) {
         const piece = this.get(square);
         board[SQUARES[square]] = null;
         if (piece && piece.type === KING) {
@@ -1074,7 +1091,7 @@ export class Chess {
         return piece;
     }
 
-    perft(depth) {
+    perft(depth: number) {
         const moves = this.generate_moves({
             legal: false
         });
@@ -1097,7 +1114,7 @@ export class Chess {
         return nodes;
     }
 
-    square_color(square) {
+    square_color(square: Square) {
         if (square in SQUARES) {
             const sq_0x88 = SQUARES[square];
             return (this.rank(sq_0x88) + this.file(sq_0x88)) % 2 === 0 ? 'light' : 'dark';
@@ -1106,7 +1123,9 @@ export class Chess {
         return null;
     }
 
-    history(options) {
+    history(options?: {
+        verbose?: boolean,
+    }) {
         const reversed_history = [] as any[];
         const move_history = [] as any[];
         const verbose =
@@ -1137,7 +1156,7 @@ export class Chess {
         return comments[this.generate_fen()];
     }
 
-    set_comment(comment) {
+    set_comment(comment: string) {
         comments[this.generate_fen()] = comment.replace('{', '[').replace('}', ']');
     }
 
@@ -1256,7 +1275,9 @@ export class Chess {
         return turn;
     }
 
-    move(move, options) {
+    move(move: Move, options?: {
+        sloppy?: boolean,
+    }) {
         /* The move function can be called with in the following parameters:
          *
          * .move('Nxb7')      <- where 'move' is a case-sensitive SAN string
@@ -1315,7 +1336,7 @@ export class Chess {
         return move ? this.make_pretty(move) : null;
     }
 
-    clear(keep_headers) {
+    clear(keep_headers: boolean) {
         if (typeof keep_headers === 'undefined') {
             keep_headers = false;
         }
@@ -1359,7 +1380,7 @@ export class Chess {
         comments = current_comments;
     }
 
-    set_header(args) {
+    set_header(args: string[]) {
         for (let i = 0; i < args.length; i += 2) {
             if (typeof args[i] === 'string' && typeof args[i + 1] === 'string') {
                 header[args[i]] = args[i + 1];
@@ -2063,7 +2084,7 @@ export class Chess {
     private algebraic(i) {
         const f = this.file(i),
             r = this.rank(i);
-        return 'abcdefgh'.substring(f, f + 1) + '87654321'.substring(r, r + 1);
+        return 'abcdefgh'.substring(f, f + 1) + '87654321'.substring(r, r + 1) as Square;
     }
 
     private swap_color(c) {
