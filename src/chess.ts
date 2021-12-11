@@ -24,6 +24,16 @@
  * POSSIBILITY OF SUCH DAMAGE.
  *
  *----------------------------------------------------------------------------*/
+interface Move {
+    color: string;
+    from: string;
+    to: string;
+    flags: any;
+    piece: any;
+    captured: any;
+    promotion: any;
+}
+
 var BLACK = 'b'
 var WHITE = 'w'
 
@@ -234,8 +244,8 @@ var castling = {
 var ep_square = EMPTY
 var half_moves = 0
 var move_number = 1
-var history = []
-var header = {}
+var history = [] as any[];
+var header = {} as any;
 var comments = {}
 
 export class Chess {
@@ -247,23 +257,6 @@ export class Chess {
     public readonly ROOK = ROOK;
     public readonly QUEEN = QUEEN;
     public readonly KING = KING;
-    public readonly SQUARES = (function () {
-        /* from the ECMA-262 spec (section 12.6.4):
-         * "The mechanics of enumerating the properties ... is
-         * implementation dependent"
-         * so: for (var sq in SQUARES) { keys.push(sq); } might not be
-         * ordered correctly
-         */
-        var keys = []
-        for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
-            if (i & 0x88) {
-                i += 7
-                continue
-            }
-            keys.push(algebraic(i))
-        }
-        return keys
-    })();
     public readonly FLAGS = FLAGS;
 
     constructor(fen) {
@@ -275,6 +268,24 @@ export class Chess {
         } else {
             this.load(fen)
         }
+    }
+
+    SQUARES() {
+        /* from the ECMA-262 spec (section 12.6.4):
+         * "The mechanics of enumerating the properties ... is
+         * implementation dependent"
+         * so: for (var sq in SQUARES) { keys.push(sq); } might not be
+         * ordered correctly
+         */
+        var keys = [] as any[];
+        for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
+            if (i & 0x88) {
+                i += 7
+                continue
+            }
+            keys.push(this.algebraic(i))
+        }
+        return keys
     }
 
     load(fen, keep_headers?) {
@@ -345,7 +356,7 @@ export class Chess {
          */
 
         var ugly_moves = this.generate_moves(options)
-        var moves = []
+        var moves = [] as any[];
 
         for (var i = 0, len = ugly_moves.length; i < len; i++) {
             /* does the user want a full move object (most likely not), or just
@@ -392,7 +403,7 @@ export class Chess {
 
     insufficient_material() {
         var pieces = {}
-        var bishops = []
+        var bishops = [] as any;
         var num_pieces = 0
         var sq_color = 0
 
@@ -443,7 +454,7 @@ export class Chess {
          * Zobrist key would be maintained in the make_move/undo_move functions,
          * avoiding the costly that we do below.
          */
-        var moves = []
+        var moves = [] as Move[];
         var positions = {}
         var repetition = false
 
@@ -631,8 +642,8 @@ export class Chess {
     }
 
     board() {
-        var output = [],
-            row = []
+        var output = [] as any[],
+            row = [] as any[];
 
         for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
             if (board[i] == null) {
@@ -665,7 +676,7 @@ export class Chess {
             typeof options === 'object' && typeof options.max_width === 'number' ?
             options.max_width :
             0
-        var result = []
+        var result = [] as any[];
         var header_exists = false
 
         /* add the PGN header headerrmation */
@@ -681,8 +692,8 @@ export class Chess {
             result.push(newline)
         }
 
-        var append_comment = function (move_string) {
-            var comment = comments[generate_fen()]
+        var append_comment = (move_string) => {
+            var comment = comments[this.generate_fen()]
             if (typeof comment !== 'undefined') {
                 var delimiter = move_string.length > 0 ? ' ' : ''
                 move_string = `${move_string}${delimiter}{${comment}}`
@@ -691,12 +702,12 @@ export class Chess {
         }
 
         /* pop all of history onto reversed_history */
-        var reversed_history = []
+        var reversed_history = [] as Move[];
         while (history.length > 0) {
             reversed_history.push(this.undo_move())
         }
 
-        var moves = []
+        var moves = [] as any[];
         var move_string = ''
 
         /* special case of a commented starting position with no moves */
@@ -707,12 +718,12 @@ export class Chess {
         /* build the list of moves.  a move_string looks like: "3. e3 e6" */
         while (reversed_history.length > 0) {
             move_string = append_comment(move_string)
-            var move = reversed_history.pop()
+            var move = reversed_history.pop() as Move;
 
             /* if the position started with black to move, start PGN with 1. ... */
             if (!history.length && move.color === 'b') {
                 move_string = move_number + '. ...'
-            } else if (move.color === 'w') {
+            } else if (move!.color === 'w') {
                 /* store the previous generated move_string if we have one */
                 if (move_string.length) {
                     moves.push(move_string)
@@ -780,7 +791,7 @@ export class Chess {
 
         /* wrap the PGN output at max_width */
         var current_width = 0
-        for (var i = 0; i < moves.length; i++) {
+        for (let i = 0; i < moves.length; i++) {
             if (current_width + moves[i].length > max_width) {
                 if (moves[i].includes('{')) {
                     current_width = wrap_comment(current_width, moves[i])
@@ -826,7 +837,7 @@ export class Chess {
             return false
         }
 
-        function parse_pgn_header(header, options) {
+        const parse_pgn_header = (header, options) => {
             var newline_char =
                 typeof options === 'object' &&
                 typeof options.newline_char === 'string' ?
@@ -840,7 +851,7 @@ export class Chess {
             for (var i = 0; i < headers.length; i++) {
                 key = headers[i].replace(/^\[([A-Z][A-Za-z]*)\s.*\]$/, '$1')
                 value = headers[i].replace(/^\[[A-Za-z]+\s"(.*)"\ *\]$/, '$1')
-                if (trim(key).length > 0) {
+                if (this.trim(key).length > 0) {
                     header_obj[key] = value
                 }
             }
@@ -867,7 +878,7 @@ export class Chess {
 
         // If no header given, begin with moves.
         var header_string = header_regex.test(pgn) ?
-            header_regex.exec(pgn)[1] :
+            header_regex.exec(pgn)![1] :
             ''
 
         // Put the board in the starting position
@@ -898,7 +909,7 @@ export class Chess {
          * we use {en,de}codeURIComponent here to support arbitrary UTF8
          * as a convenience for modern users */
 
-        var to_hex = function (string) {
+        var to_hex = function (string: string) {
             return Array.from(string)
                 .map(function (c) {
                     /* encodeURI doesn't transform most ASCII characters,
@@ -1074,7 +1085,7 @@ export class Chess {
             this.make_move(moves[i])
             if (!this.king_attacked(color)) {
                 if (depth - 1 > 0) {
-                    var child_nodes = perft(depth - 1)
+                    var child_nodes = this.perft(depth - 1)
                     nodes += child_nodes
                 } else {
                     nodes++
@@ -1096,8 +1107,8 @@ export class Chess {
     }
 
     history(options) {
-        var reversed_history = []
-        var move_history = []
+        var reversed_history = [] as any[];
+        var move_history = [] as any[];
         var verbose =
             typeof options !== 'undefined' &&
             'verbose' in options &&
@@ -1330,7 +1341,7 @@ export class Chess {
 
 
     private prune_comments() {
-        var reversed_history = []
+        var reversed_history = [] as any[];
         var current_comments = {}
         var copy_comment = function (fen) {
             if (fen in comments) {
@@ -1381,14 +1392,16 @@ export class Chess {
         }
     }
 
-    private build_move(board, from, to, flags, promotion) {
+    private build_move(board, from, to, flags, promotion?) {
         var move = {
             color: turn,
             from: from,
             to: to,
             flags: flags,
             piece: board[from].type,
-        }
+            captured: undefined,
+            promotion: undefined,
+        } as Move;
 
         if (promotion) {
             move.flags |= BITS.PROMOTION
@@ -1403,19 +1416,19 @@ export class Chess {
         return move
     }
 
-    private generate_moves(options) {
-        function add_move(board, moves, from, to, flags) {
+    private generate_moves(options?) {
+        const add_move = (board, moves, from, to, flags) => {
             /* if pawn promotion */
             if (
                 board[from].type === PAWN &&
-                (rank(to) === RANK_8 || rank(to) === RANK_1)
+                (this.rank(to) === RANK_8 || this.rank(to) === RANK_1)
             ) {
                 var pieces = [QUEEN, ROOK, BISHOP, KNIGHT]
                 for (var i = 0, len = pieces.length; i < len; i++) {
-                    moves.push(build_move(board, from, to, flags, pieces[i]))
+                    moves.push(this.build_move(board, from, to, flags, pieces[i]))
                 }
             } else {
-                moves.push(build_move(board, from, to, flags))
+                moves.push(this.build_move(board, from, to, flags))
             }
         }
 
@@ -1572,7 +1585,7 @@ export class Chess {
             this.undo_move()
         }
 
-        return legal_moves
+        return legal_moves as any[];
     }
 
     /* convert a move from 0x88 coordinates to Standard Algebraic Notation
@@ -1740,13 +1753,13 @@ export class Chess {
 
             /* if we castled, move the rook next to the king */
             if (move.flags & BITS.KSIDE_CASTLE) {
-                var castling_to = move.to - 1
-                var castling_from = move.to + 1
+                const castling_to = move.to - 1
+                const castling_from = move.to + 1
                 board[castling_to] = board[castling_from]
                 board[castling_from] = null
             } else if (move.flags & BITS.QSIDE_CASTLE) {
-                var castling_to = move.to + 1
-                var castling_from = move.to - 2
+                const castling_to = move.to + 1
+                const castling_from = move.to - 2
                 board[castling_to] = board[castling_from]
                 board[castling_from] = null
             }
@@ -2051,10 +2064,6 @@ export class Chess {
         return c === WHITE ? BLACK : WHITE
     }
 
-    private swap_color(c) {
-        return c === WHITE ? BLACK : WHITE
-    }
-
     private is_digit(c) {
         return '0123456789'.indexOf(c) !== -1
     }
@@ -2081,7 +2090,7 @@ export class Chess {
     }
 
     private clone(obj) {
-        var dupe = obj instanceof Array ? [] : {}
+        var dupe = obj instanceof Array ? [] : {} as any;
 
         for (var property in obj) {
             if (typeof property === 'object') {
