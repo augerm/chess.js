@@ -34,31 +34,31 @@ interface Move {
     promotion: any;
 }
 
-var BLACK = 'b'
-var WHITE = 'w'
+let BLACK = 'b'
+let WHITE = 'w'
 
-var EMPTY = -1
+let EMPTY = -1
 
-var PAWN = 'p'
-var KNIGHT = 'n'
-var BISHOP = 'b'
-var ROOK = 'r'
-var QUEEN = 'q'
-var KING = 'k'
+let PAWN = 'p'
+let KNIGHT = 'n'
+let BISHOP = 'b'
+let ROOK = 'r'
+let QUEEN = 'q'
+let KING = 'k'
 
-var SYMBOLS = 'pnbrqkPNBRQK'
+let SYMBOLS = 'pnbrqkPNBRQK'
 
-var DEFAULT_POSITION =
+let DEFAULT_POSITION =
     'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
 
-var TERMINATION_MARKERS = ['1-0', '0-1', '1/2-1/2', '*']
+let TERMINATION_MARKERS = ['1-0', '0-1', '1/2-1/2', '*']
 
-var PAWN_OFFSETS = {
+let PAWN_OFFSETS = {
     b: [16, 32, 17, 15],
     w: [-16, -32, -17, -15],
 }
 
-var PIECE_OFFSETS = {
+let PIECE_OFFSETS = {
     n: [-18, -33, -31, -14, 18, 33, 31, 14],
     b: [-17, -15, 17, 15],
     r: [-16, 1, 16, -1],
@@ -67,7 +67,7 @@ var PIECE_OFFSETS = {
 }
 
 // prettier-ignore
-var ATTACKS = [
+let ATTACKS = [
     20, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 20, 0,
     0, 20, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 20, 0, 0,
     0, 0, 20, 0, 0, 0, 0, 24, 0, 0, 0, 0, 20, 0, 0, 0,
@@ -86,7 +86,7 @@ var ATTACKS = [
 ];
 
 // prettier-ignore
-var RAYS = [
+let RAYS = [
     17, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 15, 0,
     0, 17, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 15, 0, 0,
     0, 0, 17, 0, 0, 0, 0, 16, 0, 0, 0, 0, 15, 0, 0, 0,
@@ -104,7 +104,7 @@ var RAYS = [
     -15, 0, 0, 0, 0, 0, 0, -16, 0, 0, 0, 0, 0, 0, -17
 ];
 
-var SHIFTS = {
+let SHIFTS = {
     p: 0,
     n: 1,
     b: 2,
@@ -113,7 +113,7 @@ var SHIFTS = {
     k: 5
 }
 
-var FLAGS = {
+let FLAGS = {
     NORMAL: 'n',
     CAPTURE: 'c',
     BIG_PAWN: 'b',
@@ -123,7 +123,7 @@ var FLAGS = {
     QSIDE_CASTLE: 'q',
 }
 
-var BITS = {
+let BITS = {
     NORMAL: 1,
     CAPTURE: 2,
     BIG_PAWN: 4,
@@ -133,17 +133,17 @@ var BITS = {
     QSIDE_CASTLE: 64,
 }
 
-var RANK_1 = 7
-var RANK_2 = 6
-var RANK_3 = 5
-var RANK_4 = 4
-var RANK_5 = 3
-var RANK_6 = 2
-var RANK_7 = 1
-var RANK_8 = 0
+let RANK_1 = 7
+let RANK_2 = 6
+let RANK_3 = 5
+let RANK_4 = 4
+let RANK_5 = 3
+let RANK_6 = 2
+let RANK_7 = 1
+let RANK_8 = 0
 
 // prettier-ignore
-var SQUARES = {
+let SQUARES = {
     a8: 0,
     b8: 1,
     c8: 2,
@@ -210,7 +210,7 @@ var SQUARES = {
     h1: 119
 };
 
-var ROOKS = {
+let ROOKS = {
     w: [{
             square: SQUARES.a1,
             flag: BITS.QSIDE_CASTLE
@@ -231,22 +231,22 @@ var ROOKS = {
     ],
 }
 
-var board = new Array(128)
-var kings = {
+let board = new Array(128)
+let kings = {
     w: EMPTY,
     b: EMPTY
 }
-var turn = WHITE
-var castling = {
+let turn = WHITE
+let castling = {
     w: 0,
     b: 0
 }
-var ep_square = EMPTY
-var half_moves = 0
-var move_number = 1
-var history = [] as any[];
-var header = {} as any;
-var comments = {}
+let ep_square = EMPTY
+let half_moves = 0
+let move_number = 1
+let history = [] as any[];
+let header = {} as any;
+let comments = {}
 
 export class Chess {
     public readonly WHITE = WHITE;
@@ -277,8 +277,8 @@ export class Chess {
          * so: for (var sq in SQUARES) { keys.push(sq); } might not be
          * ordered correctly
          */
-        var keys = [] as any[];
-        for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
+        let keys = [] as any[];
+        for (let i = SQUARES.a8; i <= SQUARES.h1; i++) {
             if (i & 0x88) {
                 i += 7
                 continue
@@ -293,9 +293,9 @@ export class Chess {
             keep_headers = false
         }
 
-        var tokens = fen.split(/\s+/)
-        var position = tokens[0]
-        var square = 0
+        let tokens = fen.split(/\s+/)
+        let position = tokens[0]
+        let square = 0
 
         if (!this.validate_fen(fen).valid) {
             return false
@@ -303,18 +303,18 @@ export class Chess {
 
         this.clear(keep_headers)
 
-        for (var i = 0; i < position.length; i++) {
-            var piece = position.charAt(i)
+        for (let i = 0; i < position.length; i++) {
+            let piece = position.charAt(i)
 
             if (piece === '/') {
                 square += 8
             } else if (this.is_digit(piece)) {
                 square += parseInt(piece, 10)
             } else {
-                var color = piece < 'a' ? WHITE : BLACK
+                let color = piece < 'a' ? WHITE : BLACK
                 this.put({
                     type: piece.toLowerCase(),
-                    color: color
+                    color
                 }, this.algebraic(square))
                 square++
             }
@@ -355,10 +355,10 @@ export class Chess {
          * unnecessary move keys resulting from a verbose call.
          */
 
-        var ugly_moves = this.generate_moves(options)
-        var moves = [] as any[];
+        let ugly_moves = this.generate_moves(options)
+        let moves = [] as any[];
 
-        for (var i = 0, len = ugly_moves.length; i < len; i++) {
+        for (let i = 0, len = ugly_moves.length; i < len; i++) {
             /* does the user want a full move object (most likely not), or just
              * SAN
              */
@@ -402,19 +402,19 @@ export class Chess {
     }
 
     insufficient_material() {
-        var pieces = {}
-        var bishops = [] as any;
-        var num_pieces = 0
-        var sq_color = 0
+        let pieces = {}
+        let bishops = [] as any;
+        let num_pieces = 0
+        let sq_color = 0
 
-        for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
+        for (let i = SQUARES.a8; i <= SQUARES.h1; i++) {
             sq_color = (sq_color + 1) % 2
             if (i & 0x88) {
                 i += 7
                 continue
             }
 
-            var piece = board[i]
+            let piece = board[i]
             if (piece) {
                 pieces[piece.type] = piece.type in pieces ? pieces[piece.type] + 1 : 1
                 if (piece.type === BISHOP) {
@@ -435,9 +435,9 @@ export class Chess {
             return true
         } else if (num_pieces === pieces[BISHOP] + 2) {
             /* kb vs. kb where any number of bishops are all on the same color */
-            var sum = 0
-            var len = bishops.length
-            for (var i = 0; i < len; i++) {
+            let sum = 0
+            let len = bishops.length
+            for (let i = 0; i < len; i++) {
                 sum += bishops[i]
             }
             if (sum === 0 || sum === len) {
@@ -454,12 +454,12 @@ export class Chess {
          * Zobrist key would be maintained in the make_move/undo_move functions,
          * avoiding the costly that we do below.
          */
-        var moves = [] as Move[];
-        var positions = {}
-        var repetition = false
+        let moves = [] as Move[];
+        let positions = {}
+        let repetition = false
 
         while (true) {
-            var move = this.undo_move()
+            let move = this.undo_move()
             if (!move) break
             moves.push(move)
         }
@@ -467,7 +467,7 @@ export class Chess {
         while (true) {
             /* remove the last two fields in the FEN string, they're not needed
              * when checking for draw by rep */
-            var fen = this.generate_fen().split(' ').slice(0, 4).join(' ')
+            let fen = this.generate_fen().split(' ').slice(0, 4).join(' ')
 
             /* has the position occurred three or move times */
             positions[fen] = fen in positions ? positions[fen] + 1 : 1
@@ -500,7 +500,7 @@ export class Chess {
      * we're at it
      */
     validate_fen(fen) {
-        var errors = {
+        let errors = {
             0: 'No errors.',
             1: 'FEN string must contain six space-delimited fields.',
             2: '6th field (move number) must be a positive integer.',
@@ -516,7 +516,7 @@ export class Chess {
         }
 
         /* 1st criterion: 6 space-seperated fields? */
-        var tokens = fen.split(/\s+/)
+        let tokens = fen.split(/\s+/)
         if (tokens.length !== 6) {
             return {
                 valid: false,
@@ -571,7 +571,7 @@ export class Chess {
         }
 
         /* 7th criterion: 1st field contains 8 rows? */
-        var rows = tokens[0].split('/')
+        let rows = tokens[0].split('/')
         if (rows.length !== 8) {
             return {
                 valid: false,
@@ -581,12 +581,12 @@ export class Chess {
         }
 
         /* 8th criterion: every row is valid? */
-        for (var i = 0; i < rows.length; i++) {
+        for (let i = 0; i < rows.length; i++) {
             /* check for right sum of fields AND not two numbers in succession */
-            var sum_fields = 0
-            var previous_was_number = false
+            let sum_fields = 0
+            let previous_was_number = false
 
-            for (var k = 0; k < rows[i].length; k++) {
+            for (let k = 0; k < rows[i].length; k++) {
                 if (!isNaN(rows[i][k])) {
                     if (previous_was_number) {
                         return {
@@ -642,10 +642,10 @@ export class Chess {
     }
 
     board() {
-        var output = [] as any[],
+        let output = [] as any[],
             row = [] as any[];
 
-        for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
+        for (let i = SQUARES.a8; i <= SQUARES.h1; i++) {
             if (board[i] == null) {
                 row.push(null)
             } else {
@@ -668,19 +668,19 @@ export class Chess {
         /* using the specification from http://www.chessclub.com/help/PGN-spec
          * example for html usage: .pgn({ max_width: 72, newline_char: "<br />" })
          */
-        var newline =
+        let newline =
             typeof options === 'object' && typeof options.newline_char === 'string' ?
             options.newline_char :
             '\n'
-        var max_width =
+        let max_width =
             typeof options === 'object' && typeof options.max_width === 'number' ?
             options.max_width :
             0
-        var result = [] as any[];
-        var header_exists = false
+        let result = [] as any[];
+        let header_exists = false
 
         /* add the PGN header headerrmation */
-        for (var i in header) {
+        for (let i in header) {
             /* TODO: order of enumerated properties in header object is not
              * guaranteed, see ECMA-262 spec (section 12.6.4)
              */
@@ -692,23 +692,23 @@ export class Chess {
             result.push(newline)
         }
 
-        var append_comment = (move_string) => {
-            var comment = comments[this.generate_fen()]
+        let append_comment = (move_string) => {
+            let comment = comments[this.generate_fen()]
             if (typeof comment !== 'undefined') {
-                var delimiter = move_string.length > 0 ? ' ' : ''
+                let delimiter = move_string.length > 0 ? ' ' : ''
                 move_string = `${move_string}${delimiter}{${comment}}`
             }
             return move_string
         }
 
         /* pop all of history onto reversed_history */
-        var reversed_history = [] as Move[];
+        let reversed_history = [] as Move[];
         while (history.length > 0) {
             reversed_history.push(this.undo_move())
         }
 
-        var moves = [] as any[];
-        var move_string = ''
+        let moves = [] as any[];
+        let move_string = ''
 
         /* special case of a commented starting position with no moves */
         if (reversed_history.length === 0) {
@@ -718,7 +718,7 @@ export class Chess {
         /* build the list of moves.  a move_string looks like: "3. e3 e6" */
         while (reversed_history.length > 0) {
             move_string = append_comment(move_string)
-            var move = reversed_history.pop() as Move;
+            let move = reversed_history.pop() as Move;
 
             /* if the position started with black to move, start PGN with 1. ... */
             if (!history.length && move.color === 'b') {
@@ -757,7 +757,7 @@ export class Chess {
             return result.join('') + moves.join(' ')
         }
 
-        var strip = function () {
+        let strip = function () {
             if (result.length > 0 && result[result.length - 1] === ' ') {
                 result.pop()
                 return true
@@ -766,8 +766,8 @@ export class Chess {
         }
 
         /* NB: this does not preserve comment whitespace. */
-        var wrap_comment = function (width, move) {
-            for (var token of move.split(' ')) {
+        let wrap_comment = function (width, move) {
+            for (let token of move.split(' ')) {
                 if (!token) {
                     continue
                 }
@@ -790,7 +790,7 @@ export class Chess {
         }
 
         /* wrap the PGN output at max_width */
-        var current_width = 0
+        let current_width = 0
         for (let i = 0; i < moves.length; i++) {
             if (current_width + moves[i].length > max_width) {
                 if (moves[i].includes('{')) {
@@ -821,7 +821,7 @@ export class Chess {
     load_pgn(pgn, options) {
         // allow the user to specify the sloppy move parser to work around over
         // disambiguation bugs in Fritz and Chessbase
-        var sloppy =
+        let sloppy =
             typeof options !== 'undefined' && 'sloppy' in options ?
             options.sloppy :
             false
@@ -831,24 +831,24 @@ export class Chess {
         }
 
         function has_keys(object) {
-            for (var key in object) {
+            for (let key in object) {
                 return true
             }
             return false
         }
 
         const parse_pgn_header = (header, options) => {
-            var newline_char =
+            let newline_char =
                 typeof options === 'object' &&
                 typeof options.newline_char === 'string' ?
                 options.newline_char :
                 '\r?\n'
-            var header_obj = {}
-            var headers = header.split(new RegExp(mask(newline_char)))
-            var key = ''
-            var value = ''
+            let header_obj = {}
+            let headers = header.split(new RegExp(mask(newline_char)))
+            let key = ''
+            let value = ''
 
-            for (var i = 0; i < headers.length; i++) {
+            for (let i = 0; i < headers.length; i++) {
                 key = headers[i].replace(/^\[([A-Z][A-Za-z]*)\s.*\]$/, '$1')
                 value = headers[i].replace(/^\[[A-Za-z]+\s"(.*)"\ *\]$/, '$1')
                 if (this.trim(key).length > 0) {
@@ -859,7 +859,7 @@ export class Chess {
             return header_obj
         }
 
-        var newline_char =
+        let newline_char =
             typeof options === 'object' && typeof options.newline_char === 'string' ?
             options.newline_char :
             '\r?\n'
@@ -867,7 +867,7 @@ export class Chess {
         // RegExp to split header. Takes advantage of the fact that header and movetext
         // will always have a blank line between them (ie, two newline_char's).
         // With default newline_char, will equal: /^(\[((?:\r?\n)|.)*\])(?:\r?\n){2}/
-        var header_regex = new RegExp(
+        let header_regex = new RegExp(
             '^(\\[((?:' +
             mask(newline_char) +
             ')|.)*\\])' +
@@ -877,7 +877,7 @@ export class Chess {
         )
 
         // If no header given, begin with moves.
-        var header_string = header_regex.test(pgn) ?
+        let header_string = header_regex.test(pgn) ?
             header_regex.exec(pgn)![1] :
             ''
 
@@ -885,15 +885,15 @@ export class Chess {
         this.reset()
 
         /* parse PGN header */
-        var headers = parse_pgn_header(header_string, options)
-        for (var key in headers) {
+        let headers = parse_pgn_header(header_string, options)
+        for (let key in headers) {
             this.set_header([key, headers[key]])
         }
 
         /* load the starting position indicated by [Setup '1'] and
          * [FEN position] */
-        if (headers['SetUp'] === '1') {
-            if (!('FEN' in headers && this.load(headers['FEN'], true))) {
+        if (headers.SetUp === '1') {
+            if (!('FEN' in headers && this.load(headers.FEN, true))) {
                 // second argument to load: don't clear the headers
                 return false
             }
@@ -909,7 +909,7 @@ export class Chess {
          * we use {en,de}codeURIComponent here to support arbitrary UTF8
          * as a convenience for modern users */
 
-        var to_hex = function (string: string) {
+        let to_hex = function (string: string) {
             return Array.from(string)
                 .map(function (c) {
                     /* encodeURI doesn't transform most ASCII characters,
@@ -921,25 +921,25 @@ export class Chess {
                 .join('')
         }
 
-        var from_hex = function (string) {
+        let from_hex = function (string) {
             return string.length == 0 ?
                 '' :
                 decodeURIComponent('%' + string.match(/.{1,2}/g).join('%'))
         }
 
-        var encode_comment = function (string) {
+        let encode_comment = function (string) {
             string = string.replace(new RegExp(mask(newline_char), 'g'), ' ')
             return `{${to_hex(string.slice(1, string.length - 1))}}`
         }
 
-        var decode_comment = function (string) {
+        let decode_comment = function (string) {
             if (string.startsWith('{') && string.endsWith('}')) {
                 return from_hex(string.slice(1, string.length - 1))
             }
         }
 
         /* delete header to get the moves */
-        var ms = pgn
+        let ms = pgn
             .replace(header_string, '')
             .replace(
                 /* encode comments so they don't get deleted below */
@@ -953,7 +953,7 @@ export class Chess {
             .replace(new RegExp(mask(newline_char), 'g'), ' ')
 
         /* delete recursive annotation variations */
-        var rav_regex = /(\([^\(\)]+\))+?/g
+        let rav_regex = /(\([^\(\)]+\))+?/g
         while (rav_regex.test(ms)) {
             ms = ms.replace(rav_regex, '')
         }
@@ -968,16 +968,16 @@ export class Chess {
         ms = ms.replace(/\$\d+/g, '')
 
         /* trim and get array of moves */
-        var moves = this.trim(ms).split(new RegExp(/\s+/))
+        let moves = this.trim(ms).split(new RegExp(/\s+/))
 
         /* delete empty entries */
         moves = moves.join(',').replace(/,,+/g, ',').split(',')
-        var move = ''
+        let move = ''
 
-        var result = ''
+        let result = ''
 
-        for (var half_move = 0; half_move < moves.length; half_move++) {
-            var comment = decode_comment(moves[half_move])
+        for (let half_move = 0; half_move < moves.length; half_move++) {
+            let comment = decode_comment(moves[half_move])
             if (comment !== undefined) {
                 comments[this.generate_fen()] = comment
                 continue
@@ -1004,7 +1004,7 @@ export class Chess {
          * match the termination marker. Only do this when headers are present,
          * but the result tag is missing
          */
-        if (result && Object.keys(header).length && !header['Result']) {
+        if (result && Object.keys(header).length && !header.Result) {
             this.set_header(['Result', result])
         }
 
@@ -1031,7 +1031,7 @@ export class Chess {
             return false
         }
 
-        var sq = SQUARES[square]
+        let sq = SQUARES[square]
 
         /* don't let the user place more than one king */
         if (
@@ -1055,7 +1055,7 @@ export class Chess {
     }
 
     get(square) {
-        var piece = board[SQUARES[square]]
+        let piece = board[SQUARES[square]]
         return piece ? {
             type: piece.type,
             color: piece.color
@@ -1063,7 +1063,7 @@ export class Chess {
     }
 
     remove(square) {
-        var piece = this.get(square)
+        let piece = this.get(square)
         board[SQUARES[square]] = null
         if (piece && piece.type === KING) {
             kings[piece.color] = EMPTY
@@ -1075,17 +1075,17 @@ export class Chess {
     }
 
     perft(depth) {
-        var moves = this.generate_moves({
+        let moves = this.generate_moves({
             legal: false
         })
-        var nodes = 0
-        var color = turn
+        let nodes = 0
+        let color = turn
 
-        for (var i = 0, len = moves.length; i < len; i++) {
+        for (let i = 0, len = moves.length; i < len; i++) {
             this.make_move(moves[i])
             if (!this.king_attacked(color)) {
                 if (depth - 1 > 0) {
-                    var child_nodes = this.perft(depth - 1)
+                    let child_nodes = this.perft(depth - 1)
                     nodes += child_nodes
                 } else {
                     nodes++
@@ -1099,7 +1099,7 @@ export class Chess {
 
     square_color(square) {
         if (square in SQUARES) {
-            var sq_0x88 = SQUARES[square]
+            let sq_0x88 = SQUARES[square]
             return (this.rank(sq_0x88) + this.file(sq_0x88)) % 2 === 0 ? 'light' : 'dark'
         }
 
@@ -1107,9 +1107,9 @@ export class Chess {
     }
 
     history(options) {
-        var reversed_history = [] as any[];
-        var move_history = [] as any[];
-        var verbose =
+        let reversed_history = [] as any[];
+        let move_history = [] as any[];
+        let verbose =
             typeof options !== 'undefined' &&
             'verbose' in options &&
             options.verbose
@@ -1119,7 +1119,7 @@ export class Chess {
         }
 
         while (reversed_history.length > 0) {
-            var move = reversed_history.pop()
+            let move = reversed_history.pop()
             if (verbose) {
                 move_history.push(this.make_pretty(move))
             } else {
@@ -1142,7 +1142,7 @@ export class Chess {
     }
 
     delete_comment() {
-        var comment = comments[this.generate_fen()]
+        let comment = comments[this.generate_fen()]
         delete comments[this.generate_fen()]
         return comment
     }
@@ -1151,7 +1151,7 @@ export class Chess {
         this.prune_comments()
         return Object.keys(comments).map(function (fen) {
             return {
-                fen: fen,
+                fen,
                 comment: comments[fen]
             }
         })
@@ -1160,21 +1160,21 @@ export class Chess {
     delete_comments() {
         this.prune_comments()
         return Object.keys(comments).map(function (fen) {
-            var comment = comments[fen]
+            let comment = comments[fen]
             delete comments[fen]
             return {
-                fen: fen,
-                comment: comment
+                fen,
+                comment
             }
         })
     }
 
 
     generate_fen() {
-        var empty = 0
-        var fen = ''
+        let empty = 0
+        let fen = ''
 
-        for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
+        for (let i = SQUARES.a8; i <= SQUARES.h1; i++) {
             if (board[i] == null) {
                 empty++
             } else {
@@ -1182,8 +1182,8 @@ export class Chess {
                     fen += empty
                     empty = 0
                 }
-                var color = board[i].color
-                var piece = board[i].type
+                let color = board[i].color
+                let piece = board[i].type
 
                 fen += color === WHITE ? piece.toUpperCase() : piece.toLowerCase()
             }
@@ -1202,7 +1202,7 @@ export class Chess {
             }
         }
 
-        var cflags = ''
+        let cflags = ''
         if (castling[WHITE] & BITS.KSIDE_CASTLE) {
             cflags += 'K'
         }
@@ -1218,14 +1218,14 @@ export class Chess {
 
         /* do we have an empty castling flag? */
         cflags = cflags || '-'
-        var epflags = ep_square === EMPTY ? '-' : this.algebraic(ep_square)
+        let epflags = ep_square === EMPTY ? '-' : this.algebraic(ep_square)
 
         return [fen, turn, cflags, epflags, half_moves, move_number].join(' ')
     }
 
     ascii() {
-        var s = '   +------------------------+\n'
-        for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
+        let s = '   +------------------------+\n'
+        for (let i = SQUARES.a8; i <= SQUARES.h1; i++) {
             /* display the rank */
             if (this.file(i) === 0) {
                 s += ' ' + '87654321' [this.rank(i)] + ' |'
@@ -1235,9 +1235,9 @@ export class Chess {
             if (board[i] == null) {
                 s += ' . '
             } else {
-                var piece = board[i].type
-                var color = board[i].color
-                var symbol = color === WHITE ? piece.toUpperCase() : piece.toLowerCase()
+                let piece = board[i].type
+                let color = board[i].color
+                let symbol = color === WHITE ? piece.toUpperCase() : piece.toLowerCase()
                 s += ' ' + symbol + ' '
             }
 
@@ -1269,20 +1269,20 @@ export class Chess {
 
         // allow the user to specify the sloppy move parser to work around over
         // disambiguation bugs in Fritz and Chessbase
-        var sloppy =
+        let sloppy =
             typeof options !== 'undefined' && 'sloppy' in options ?
             options.sloppy :
             false
 
-        var move_obj = null
+        let move_obj = null
 
         if (typeof move === 'string') {
             move_obj = this.move_from_san(move, sloppy)
         } else if (typeof move === 'object') {
-            var moves = this.generate_moves()
+            let moves = this.generate_moves()
 
             /* convert the pretty move object to an ugly move object */
-            for (var i = 0, len = moves.length; i < len; i++) {
+            for (let i = 0, len = moves.length; i < len; i++) {
                 if (
                     move.from === this.algebraic(moves[i].from) &&
                     move.to === this.algebraic(moves[i].to) &&
@@ -1303,7 +1303,7 @@ export class Chess {
         /* need to make a copy of move because we can't generate SAN after the
          * move is made
          */
-        var pretty_move = this.make_pretty(move_obj)
+        let pretty_move = this.make_pretty(move_obj)
 
         this.make_move(move_obj)
 
@@ -1311,7 +1311,7 @@ export class Chess {
     }
 
     undo() {
-        var move = this.undo_move()
+        let move = this.undo_move()
         return move ? this.make_pretty(move) : null
     }
 
@@ -1341,9 +1341,9 @@ export class Chess {
 
 
     private prune_comments() {
-        var reversed_history = [] as any[];
-        var current_comments = {}
-        var copy_comment = function (fen) {
+        let reversed_history = [] as any[];
+        let current_comments = {}
+        let copy_comment = function (fen) {
             if (fen in comments) {
                 current_comments[fen] = comments[fen]
             }
@@ -1360,7 +1360,7 @@ export class Chess {
     }
 
     set_header(args) {
-        for (var i = 0; i < args.length; i += 2) {
+        for (let i = 0; i < args.length; i += 2) {
             if (typeof args[i] === 'string' && typeof args[i + 1] === 'string') {
                 header[args[i]] = args[i + 1]
             }
@@ -1384,20 +1384,20 @@ export class Chess {
         if (history.length > 0) return
 
         if (fen !== DEFAULT_POSITION) {
-            header['SetUp'] = '1'
-            header['FEN'] = fen
+            header.SetUp = '1'
+            header.FEN = fen
         } else {
-            delete header['SetUp']
-            delete header['FEN']
+            delete header.SetUp
+            delete header.FEN
         }
     }
 
     private build_move(board, from, to, flags, promotion?) {
-        var move = {
+        let move = {
             color: turn,
-            from: from,
-            to: to,
-            flags: flags,
+            from,
+            to,
+            flags,
             piece: board[from].type,
             captured: undefined,
             promotion: undefined,
@@ -1423,8 +1423,8 @@ export class Chess {
                 board[from].type === PAWN &&
                 (this.rank(to) === RANK_8 || this.rank(to) === RANK_1)
             ) {
-                var pieces = [QUEEN, ROOK, BISHOP, KNIGHT]
-                for (var i = 0, len = pieces.length; i < len; i++) {
+                let pieces = [QUEEN, ROOK, BISHOP, KNIGHT]
+                for (let i = 0, len = pieces.length; i < len; i++) {
                     moves.push(this.build_move(board, from, to, flags, pieces[i]))
                 }
             } else {
@@ -1432,25 +1432,25 @@ export class Chess {
             }
         }
 
-        var moves = []
-        var us = turn
-        var them = this.swap_color(us)
-        var second_rank = {
+        let moves = []
+        let us = turn
+        let them = this.swap_color(us)
+        let second_rank = {
             b: RANK_7,
             w: RANK_2
         }
 
-        var first_sq = SQUARES.a8
-        var last_sq = SQUARES.h1
-        var single_square = false
+        let first_sq = SQUARES.a8
+        let last_sq = SQUARES.h1
+        let single_square = false
 
         /* do we want legal moves? */
-        var legal =
+        let legal =
             typeof options !== 'undefined' && 'legal' in options ?
             options.legal :
             true
 
-        var piece_type =
+        let piece_type =
             typeof options !== 'undefined' &&
             'piece' in options &&
             typeof options.piece === 'string' ?
@@ -1468,26 +1468,26 @@ export class Chess {
             }
         }
 
-        for (var i = first_sq; i <= last_sq; i++) {
+        for (let i = first_sq; i <= last_sq; i++) {
             /* did we run off the end of the board */
             if (i & 0x88) {
                 i += 7
                 continue
             }
 
-            var piece = board[i]
+            let piece = board[i]
             if (piece == null || piece.color !== us) {
                 continue
             }
 
             if (piece.type === PAWN && (piece_type === true || piece_type === PAWN)) {
                 /* single square, non-capturing */
-                var square = i + PAWN_OFFSETS[us][0]
+                let square = i + PAWN_OFFSETS[us][0]
                 if (board[square] == null) {
                     add_move(board, moves, i, square, BITS.NORMAL)
 
                     /* double square */
-                    var square = i + PAWN_OFFSETS[us][1]
+                    let square = i + PAWN_OFFSETS[us][1]
                     if (second_rank[us] === this.rank(i) && board[square] == null) {
                         add_move(board, moves, i, square, BITS.BIG_PAWN)
                     }
@@ -1495,7 +1495,7 @@ export class Chess {
 
                 /* pawn captures */
                 for (j = 2; j < 4; j++) {
-                    var square = i + PAWN_OFFSETS[us][j]
+                    let square = i + PAWN_OFFSETS[us][j]
                     if (square & 0x88) continue
 
                     if (board[square] != null && board[square].color === them) {
@@ -1505,9 +1505,9 @@ export class Chess {
                     }
                 }
             } else if (piece_type === true || piece_type === piece.type) {
-                for (var j = 0, len = PIECE_OFFSETS[piece.type].length; j < len; j++) {
-                    var offset = PIECE_OFFSETS[piece.type][j]
-                    var square = i
+                for (let j = 0, len = PIECE_OFFSETS[piece.type].length; j < len; j++) {
+                    let offset = PIECE_OFFSETS[piece.type][j]
+                    let square = i
 
                     while (true) {
                         square += offset
@@ -1535,8 +1535,8 @@ export class Chess {
             if (!single_square || last_sq === kings[us]) {
                 /* king-side castling */
                 if (castling[us] & BITS.KSIDE_CASTLE) {
-                    var castling_from = kings[us]
-                    var castling_to = castling_from + 2
+                    let castling_from = kings[us]
+                    let castling_to = castling_from + 2
 
                     if (
                         board[castling_from + 1] == null &&
@@ -1551,8 +1551,8 @@ export class Chess {
 
                 /* queen-side castling */
                 if (castling[us] & BITS.QSIDE_CASTLE) {
-                    var castling_from = kings[us]
-                    var castling_to = castling_from - 2
+                    let castling_from = kings[us]
+                    let castling_to = castling_from - 2
 
                     if (
                         board[castling_from - 1] == null &&
@@ -1576,8 +1576,8 @@ export class Chess {
         }
 
         /* filter out illegal moves */
-        var legal_moves = []
-        for (var i = 0, len = moves.length; i < len; i++) {
+        let legal_moves = []
+        for (let i = 0, len = moves.length; i < len; i++) {
             this.make_move(moves[i])
             if (!this.king_attacked(us)) {
                 legal_moves.push(moves[i])
@@ -1609,7 +1609,7 @@ export class Chess {
      * 4. ... Ne7 is technically the valid SAN
      */
     private move_to_san(move, moves) {
-        var output = ''
+        let output = ''
 
         if (move.flags & BITS.KSIDE_CASTLE) {
             output = 'O-O'
@@ -1617,7 +1617,7 @@ export class Chess {
             output = 'O-O-O'
         } else {
             if (move.piece !== PAWN) {
-                var disambiguator = this.get_disambiguator(move, moves)
+                let disambiguator = this.get_disambiguator(move, moves)
                 output += move.piece.toUpperCase() + disambiguator
             }
 
@@ -1654,7 +1654,7 @@ export class Chess {
     }
 
     private attacked(color, square) {
-        for (var i = SQUARES.a8; i <= SQUARES.h1; i++) {
+        for (let i = SQUARES.a8; i <= SQUARES.h1; i++) {
             /* did we run off the end of the board */
             if (i & 0x88) {
                 i += 7
@@ -1664,9 +1664,9 @@ export class Chess {
             /* if empty square or wrong color */
             if (board[i] == null || board[i].color !== color) continue
 
-            var piece = board[i]
-            var difference = i - square
-            var index = difference + 119
+            let piece = board[i]
+            let difference = i - square
+            let index = difference + 119
 
             if (ATTACKS[index] & (1 << SHIFTS[piece.type])) {
                 if (piece.type === PAWN) {
@@ -1681,10 +1681,10 @@ export class Chess {
                 /* if the piece is a knight or a king */
                 if (piece.type === 'n' || piece.type === 'k') return true
 
-                var offset = RAYS[index]
-                var j = i + offset
+                let offset = RAYS[index]
+                let j = i + offset
 
-                var blocked = false
+                let blocked = false
                 while (j !== square) {
                     if (board[j] != null) {
                         blocked = true
@@ -1706,25 +1706,25 @@ export class Chess {
 
     private push(move) {
         history.push({
-            move: move,
+            move,
             kings: {
                 b: kings.b,
                 w: kings.w
             },
-            turn: turn,
+            turn,
             castling: {
                 b: castling.b,
                 w: castling.w
             },
-            ep_square: ep_square,
-            half_moves: half_moves,
-            move_number: move_number,
+            ep_square,
+            half_moves,
+            move_number,
         })
     }
 
     private make_move(move) {
-        var us = turn
-        var them = this.swap_color(us)
+        let us = turn
+        let them = this.swap_color(us)
         this.push(move)
 
         board[move.to] = board[move.from]
@@ -1770,7 +1770,7 @@ export class Chess {
 
         /* turn off castling if we move a rook */
         if (castling[us]) {
-            for (var i = 0, len = ROOKS[us].length; i < len; i++) {
+            for (let i = 0, len = ROOKS[us].length; i < len; i++) {
                 if (
                     move.from === ROOKS[us][i].square &&
                     castling[us] & ROOKS[us][i].flag
@@ -1783,7 +1783,7 @@ export class Chess {
 
         /* turn off castling if we capture a rook */
         if (castling[them]) {
-            for (var i = 0, len = ROOKS[them].length; i < len; i++) {
+            for (let i = 0, len = ROOKS[them].length; i < len; i++) {
                 if (
                     move.to === ROOKS[them][i].square &&
                     castling[them] & ROOKS[them][i].flag
@@ -1821,12 +1821,12 @@ export class Chess {
     }
 
     private undo_move() {
-        var old = history.pop()
+        let old = history.pop()
         if (old == null) {
             return null
         }
 
-        var move = old.move
+        let move = old.move
         kings = old.kings
         turn = old.turn
         castling = old.castling
@@ -1834,8 +1834,8 @@ export class Chess {
         half_moves = old.half_moves
         move_number = old.move_number
 
-        var us = turn
-        var them = this.swap_color(turn)
+        let us = turn
+        let them = this.swap_color(turn)
 
         board[move.from] = board[move.to]
         board[move.from].type = move.piece // to undo any promotions
@@ -1847,7 +1847,7 @@ export class Chess {
                 color: them
             }
         } else if (move.flags & BITS.EP_CAPTURE) {
-            var index
+            let index
             if (us === BLACK) {
                 index = move.to - 16
             } else {
@@ -1860,7 +1860,7 @@ export class Chess {
         }
 
         if (move.flags & (BITS.KSIDE_CASTLE | BITS.QSIDE_CASTLE)) {
-            var castling_to, castling_from
+            let castling_to, castling_from
             if (move.flags & BITS.KSIDE_CASTLE) {
                 castling_to = move.to + 1
                 castling_from = move.to - 1
@@ -1878,18 +1878,18 @@ export class Chess {
 
     /* this function is used to uniquely identify ambiguous moves */
     private get_disambiguator(move, moves) {
-        var from = move.from
-        var to = move.to
-        var piece = move.piece
+        let from = move.from
+        let to = move.to
+        let piece = move.piece
 
-        var ambiguities = 0
-        var same_rank = 0
-        var same_file = 0
+        let ambiguities = 0
+        let same_rank = 0
+        let same_file = 0
 
-        for (var i = 0, len = moves.length; i < len; i++) {
-            var ambig_from = moves[i].from
-            var ambig_to = moves[i].to
-            var ambig_piece = moves[i].piece
+        for (let i = 0, len = moves.length; i < len; i++) {
+            let ambig_from = moves[i].from
+            let ambig_to = moves[i].to
+            let ambig_piece = moves[i].piece
 
             /* if a move of the same piece type ends on the same to square, we'll
              * need to add a disambiguator to the algebraic notation
@@ -1928,9 +1928,9 @@ export class Chess {
     }
 
     private infer_piece_type(san) {
-        var piece_type = san.charAt(0)
+        let piece_type = san.charAt(0)
         if (piece_type >= 'a' && piece_type <= 'h') {
-            var matches = san.match(/[a-h]\d.*[a-h]\d/)
+            let matches = san.match(/[a-h]\d.*[a-h]\d/)
             if (matches) {
                 return undefined
             }
@@ -1946,9 +1946,9 @@ export class Chess {
     // convert a move from Standard Algebraic Notation (SAN) to 0x88 coordinates
     private move_from_san(move, sloppy) {
         // strip off any move decorations: e.g Nf3+?! becomes Nf3
-        var clean_move = this.stripped_san(move)
+        let clean_move = this.stripped_san(move)
 
-        var overly_disambiguated = false
+        let overly_disambiguated = false
 
         if (sloppy) {
             // The sloppy parser allows the user to parse non-standard chess
@@ -1967,14 +1967,14 @@ export class Chess {
             // bishop move). In these cases, the sloppy parser will default to the
             // most most basic interpretation - b1c3 parses to Nc3.
 
-            var matches = clean_move.match(
+            let matches = clean_move.match(
                 /([pnbrqkPNBRQK])?([a-h][1-8])x?-?([a-h][1-8])([qrbnQRBN])?/
             )
             if (matches) {
-                var piece = matches[1]
-                var from = matches[2]
-                var to = matches[3]
-                var promotion = matches[4]
+                let piece = matches[1]
+                let from = matches[2]
+                let to = matches[3]
+                let promotion = matches[4]
 
                 if (from.length == 1) {
                     overly_disambiguated = true
@@ -1984,30 +1984,30 @@ export class Chess {
                 // be overly disambiguated (e.g. Nge7 is unnecessary and non-standard
                 // when there is one legal knight move to e7). In this case, the value
                 // of 'from' variable will be a rank or file, not a square.
-                var matches = clean_move.match(
+                let matches = clean_move.match(
                     /([pnbrqkPNBRQK])?([a-h]?[1-8]?)x?-?([a-h][1-8])([qrbnQRBN])?/
                 )
 
                 if (matches) {
-                    var piece = matches[1]
-                    var from = matches[2]
-                    var to = matches[3]
-                    var promotion = matches[4]
+                    let piece = matches[1]
+                    let from = matches[2]
+                    let to = matches[3]
+                    let promotion = matches[4]
 
                     if (from.length == 1) {
-                        var overly_disambiguated = true
+                        let overly_disambiguated = true
                     }
                 }
             }
         }
 
-        var piece_type = this.infer_piece_type(clean_move)
-        var moves = this.generate_moves({
+        let piece_type = this.infer_piece_type(clean_move)
+        let moves = this.generate_moves({
             legal: true,
             piece: piece ? piece : piece_type,
         })
 
-        for (var i = 0, len = moves.length; i < len; i++) {
+        for (let i = 0, len = moves.length; i < len; i++) {
             // try the strict parser first, then the sloppy parser if requested
             // by the user
             if (clean_move === this.stripped_san(this.move_to_san(moves[i], moves))) {
@@ -2026,7 +2026,7 @@ export class Chess {
                     } else if (overly_disambiguated) {
                         // SPECIAL CASE: we parsed a move string that may have an unneeded
                         // rank/file disambiguator (e.g. Nge7).  The 'from' variable will
-                        var square = this.algebraic(moves[i].from)
+                        let square = this.algebraic(moves[i].from)
                         if (
                             (!piece || piece.toLowerCase() == moves[i].piece) &&
                             SQUARES[to] == moves[i].to &&
@@ -2055,7 +2055,7 @@ export class Chess {
     }
 
     private algebraic(i) {
-        var f = this.file(i),
+        let f = this.file(i),
             r = this.rank(i)
         return 'abcdefgh'.substring(f, f + 1) + '87654321'.substring(r, r + 1)
     }
@@ -2070,16 +2070,16 @@ export class Chess {
 
     /* pretty = external move object */
     private make_pretty(ugly_move) {
-        var move = this.clone(ugly_move)
+        let move = this.clone(ugly_move)
         move.san = this.move_to_san(move, this.generate_moves({
             legal: true
         }))
         move.to = this.algebraic(move.to)
         move.from = this.algebraic(move.from)
 
-        var flags = ''
+        let flags = ''
 
-        for (var flag in BITS) {
+        for (let flag in BITS) {
             if (BITS[flag] & move.flags) {
                 flags += FLAGS[flag]
             }
@@ -2090,9 +2090,9 @@ export class Chess {
     }
 
     private clone(obj) {
-        var dupe = obj instanceof Array ? [] : {} as any;
+        let dupe = obj instanceof Array ? [] : {} as any;
 
-        for (var property in obj) {
+        for (let property in obj) {
             if (typeof property === 'object') {
                 dupe[property] = this.clone(obj[property])
             } else {
