@@ -16,7 +16,6 @@
     "prettier": "^2.2.1"
   },
   "scripts": {
-    "test": "jest",
-    "format": "prettier --write chess.js"
+    "build": "tsc"
   }
 }
