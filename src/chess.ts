@@ -28,7 +28,7 @@ export type Color = 'w'|'b';
 export type PieceType = 'p'|'n'|'b'|'r'|'q'|'k';
 export type Square = keyof typeof SQUARES;
 
-interface Move {
+export interface Move {
     color: string;
     from: string;
     to: string;
@@ -38,7 +38,7 @@ interface Move {
     promotion: any;
 }
 
-interface Piece {
+export interface Piece {
     color: Color;
     type: PieceType;
 }
